@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>🎄 Quizmas - Join Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <link rel="stylesheet" href="player.css" />
+  </head>
+  <body>
+    <button class="mute-btn" id="mute-btn" onclick="toggleSound()">🔊</button>
+    <div class="container">
+      <!-- Join Screen -->
+      <div id="join-screen" class="screen active">
+        <div class="logo">🎄</div>
+        <h1>QUIZMAS</h1>
+
+        <div class="join-form">
+          <input
+            type="text"
+            id="game-code-input"
+            placeholder="Game PIN"
+            maxlength="6"
+            autocomplete="off"
+          />
+          <input
+            type="text"
+            id="player-name-input"
+            placeholder="Nickname"
+            maxlength="20"
+            autocomplete="off"
+          />
+          <button class="join-btn" onclick="joinGame()">Join!</button>
+        </div>
+
+        <div class="error-msg" id="error-msg"></div>
+      </div>
+
+      <!-- Waiting Screen -->
+      <div id="waiting-screen" class="screen">
+        <div class="check-icon">✓</div>
+        <h1>You're In!</h1>
+        <p class="player-display" id="player-display">-</p>
+        <p class="waiting-text">Waiting for the game to start...</p>
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Get Ready Screen -->
+      <div id="ready-screen" class="screen">
+        <h1>Get Ready!</h1>
+        <div class="ready-icon">⚡</div>
+        <p>Question coming up...</p>
+      </div>
+
+      <!-- Answer Screen -->
+      <div id="answer-screen" class="screen">
+        <div class="answer-grid">
+          <button class="answer-btn red" onclick="selectAnswer(0)">
+            <span class="shape">▲</span>
+          </button>
+          <button class="answer-btn blue" onclick="selectAnswer(1)">
+            <span class="shape">◆</span>
+          </button>
+          <button class="answer-btn yellow" onclick="selectAnswer(2)">
+            <span class="shape">●</span>
+          </button>
+          <button class="answer-btn green" onclick="selectAnswer(3)">
+            <span class="shape">■</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Waiting for Results Screen -->
+      <div id="submitted-screen" class="screen">
+        <div class="submitted-icon" id="submitted-icon">🤞</div>
+        <h1 id="submitted-text">Answer Submitted!</h1>
+        <p>Waiting for everyone...</p>
+      </div>
+
+      <!-- Result Screen -->
+      <div id="result-screen" class="screen">
+        <div class="result-icon" id="result-icon">✓</div>
+        <h1 id="result-text">Correct!</h1>
+        <div class="points-display" id="points-display">+1000</div>
+        <div class="streak-display" id="streak-display">🔥 5 Streak!</div>
+        <div class="total-score">
+          <span>Total: </span>
+          <span id="total-score">0</span>
+        </div>
+      </div>
+
+      <!-- Leaderboard Position Screen -->
+      <div id="rank-screen" class="screen">
+        <h1>Your Position</h1>
+        <div class="rank-display" id="rank-display">#1</div>
+        <div class="rank-score" id="rank-score">0 pts</div>
+      </div>
+
+      <!-- Final Screen -->
+      <div id="final-screen" class="screen">
+        <div class="final-icon" id="final-icon">🏆</div>
+        <h1 id="final-text">Game Over!</h1>
+        <div class="final-rank" id="final-rank">#1</div>
+        <div class="final-score" id="final-score">0 pts</div>
+        <button class="play-again-btn" onclick="location.reload()">
+          Play Again
+        </button>
+      </div>
+
+      <!-- Disconnected Screen -->
+      <div id="disconnected-screen" class="screen">
+        <div class="disconnect-icon">😢</div>
+        <h1>Disconnected</h1>
+        <p id="disconnect-reason">Lost connection to game</p>
+        <button class="reconnect-btn" onclick="location.reload()">
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="sounds.js"></script>
+    <script src="player.js"></script>
+  </body>
+</html>

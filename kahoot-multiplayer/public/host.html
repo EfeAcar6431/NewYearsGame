@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🎄 Quizmas - Host</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="host.css" />
+  </head>
+  <body>
+    <button class="mute-btn" id="mute-btn" onclick="toggleSound()">🔊</button>
+    <div class="container">
+      <!-- Setup Screen -->
+      <div id="setup-screen" class="screen active">
+        <div class="logo">🎄 QUIZMAS 🎅</div>
+        <p class="subtitle">Christmas Quiz Game! ❄️</p>
+
+        <div class="setup-card">
+          <div class="form-group">
+            <label>Category</label>
+            <div class="category-grid" id="category-grid"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Questions</label>
+            <div class="question-btns">
+              <button class="q-btn" onclick="setQuestions(5)">5</button>
+              <button class="q-btn selected" onclick="setQuestions(10)">
+                10
+              </button>
+              <button class="q-btn" onclick="setQuestions(15)">15</button>
+              <button class="q-btn" onclick="setQuestions(20)">20</button>
+            </div>
+          </div>
+
+          <button class="create-btn" onclick="createGame()">CREATE GAME</button>
+        </div>
+      </div>
+
+      <!-- Lobby Screen -->
+      <div id="lobby-screen" class="screen">
+        <div class="lobby-header">
+          <div class="join-info">
+            <p>Join at</p>
+            <div class="join-url" id="join-url">loading...</div>
+          </div>
+          <div class="game-code-box">
+            <p>Game PIN</p>
+            <div class="game-code" id="game-code">------</div>
+          </div>
+        </div>
+
+        <div class="players-section">
+          <h2><span id="player-count">0</span> Players</h2>
+          <div class="players-grid" id="players-grid"></div>
+        </div>
+
+        <button class="start-btn" id="start-btn" onclick="startGame()" disabled>
+          Waiting for players...
+        </button>
+      </div>
+
+      <!-- Get Ready Screen -->
+      <div id="ready-screen" class="screen">
+        <div class="ready-content">
+          <h1>🎄 GET READY! 🎅</h1>
+          <div class="countdown" id="ready-countdown">3</div>
+          <p>
+            Question <span id="ready-q-num">1</span> of
+            <span id="ready-q-total">10</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Question Screen -->
+      <div id="question-screen" class="screen">
+        <div class="question-header">
+          <div class="timer-display">
+            <svg class="timer-ring" viewBox="0 0 100 100">
+              <circle class="timer-bg" cx="50" cy="50" r="45" />
+              <circle
+                class="timer-progress"
+                id="timer-progress"
+                cx="50"
+                cy="50"
+                r="45"
+              />
+            </svg>
+            <span class="timer-num" id="timer-num">20</span>
+          </div>
+          <div class="q-info">
+            <span id="q-counter">1/10</span>
+          </div>
+          <div class="answer-counter">
+            <span id="answered-count">0</span> /
+            <span id="total-players">0</span> answered
+          </div>
+        </div>
+
+        <div class="question-box">
+          <h1 id="question-text">Question goes here?</h1>
+        </div>
+
+        <div class="answers-grid">
+          <div class="answer-card red" id="answer-0">
+            <span class="shape">▲</span>
+            <span class="text"></span>
+          </div>
+          <div class="answer-card blue" id="answer-1">
+            <span class="shape">◆</span>
+            <span class="text"></span>
+          </div>
+          <div class="answer-card yellow" id="answer-2">
+            <span class="shape">●</span>
+            <span class="text"></span>
+          </div>
+          <div class="answer-card green" id="answer-3">
+            <span class="shape">■</span>
+            <span class="text"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="results-screen" class="screen">
+        <div class="results-content">
+          <h1>CORRECT ANSWER</h1>
+          <div class="correct-answer" id="correct-answer">Answer</div>
+
+          <div class="answer-stats">
+            <div class="stat-bar red">
+              <span class="stat-shape">▲</span>
+              <div class="stat-fill" id="stat-0"></div>
+              <span class="stat-count" id="count-0">0</span>
+            </div>
+            <div class="stat-bar blue">
+              <span class="stat-shape">◆</span>
+              <div class="stat-fill" id="stat-1"></div>
+              <span class="stat-count" id="count-1">0</span>
+            </div>
+            <div class="stat-bar yellow">
+              <span class="stat-shape">●</span>
+              <div class="stat-fill" id="stat-2"></div>
+              <span class="stat-count" id="count-2">0</span>
+            </div>
+            <div class="stat-bar green">
+              <span class="stat-shape">■</span>
+              <div class="stat-fill" id="stat-3"></div>
+              <span class="stat-count" id="count-3">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Screen -->
+      <div id="leaderboard-screen" class="screen">
+        <div class="leaderboard-content">
+          <h1>🎄 NICE LIST 🎅</h1>
+          <div class="leaderboard-list" id="leaderboard-list"></div>
+          <button class="next-btn" onclick="nextQuestion()">
+            Next Question →
+          </button>
+        </div>
+      </div>
+
+      <!-- Final Screen -->
+      <div id="final-screen" class="screen">
+        <div class="final-content">
+          <div class="confetti" id="confetti"></div>
+          <h1>🎄 MERRY QUIZMAS! 🎅</h1>
+
+          <div class="podium">
+            <div class="podium-spot second" id="second-place">
+              <div class="podium-player">
+                <span class="podium-medal">🥈</span>
+                <span class="podium-name">-</span>
+                <span class="podium-score">0</span>
+              </div>
+              <div class="podium-stand">2</div>
+            </div>
+            <div class="podium-spot first" id="first-place">
+              <div class="podium-player">
+                <span class="podium-medal">🥇</span>
+                <span class="podium-name">-</span>
+                <span class="podium-score">0</span>
+              </div>
+              <div class="podium-stand">1</div>
+            </div>
+            <div class="podium-spot third" id="third-place">
+              <div class="podium-player">
+                <span class="podium-medal">🥉</span>
+                <span class="podium-name">-</span>
+                <span class="podium-score">0</span>
+              </div>
+              <div class="podium-stand">3</div>
+            </div>
+          </div>
+
+          <button class="new-game-btn" onclick="location.reload()">
+            New Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="questions.js"></script>
+    <script src="sounds.js"></script>
+    <script src="host.js"></script>
+  </body>
+</html>

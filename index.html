@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Impostor Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="scanlines"></div>
+    <div class="container">
+      <!-- Setup Screen -->
+      <div id="setup-screen" class="screen active">
+        <div class="logo-container">
+          <h1 class="glitch" data-text="IMPOSTOR">IMPOSTOR</h1>
+          <p class="tagline">Who's on the Naughty List?</p>
+        </div>
+
+        <div class="setup-form">
+          <div class="input-group">
+            <label for="player-count">Number of Players</label>
+            <div class="stepper">
+              <button class="stepper-btn" onclick="adjustPlayers(-1)">−</button>
+              <input
+                type="number"
+                id="player-count"
+                value="4"
+                min="3"
+                max="12"
+                readonly
+              />
+              <button class="stepper-btn" onclick="adjustPlayers(1)">+</button>
+            </div>
+          </div>
+
+          <div id="player-names" class="player-names">
+            <!-- Player name inputs will be generated here -->
+          </div>
+
+          <button class="btn-primary" onclick="goToCategory()">
+            <span class="btn-text">NEXT</span>
+            <span class="btn-glow"></span>
+          </button>
+
+          <button
+            class="btn-secondary scoreboard-btn"
+            onclick="showScoreboard()"
+          >
+            <span>📊 SCOREBOARD</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Selection Screen -->
+      <div id="category-screen" class="screen">
+        <div class="category-content">
+          <h2>🎁 CHOOSE CATEGORY 🎁</h2>
+          <p class="category-subtitle">Pick a present to unwrap this round!</p>
+
+          <div class="loading-indicator" id="category-loading">
+            <div class="spinner"></div>
+            <p>Loading categories...</p>
+          </div>
+
+          <div id="category-list" class="category-list">
+            <!-- Categories will be generated here -->
+          </div>
+
+          <div class="category-actions">
+            <button class="btn-secondary" onclick="showScreen('setup-screen')">
+              <span>← BACK</span>
+            </button>
+            <button
+              class="btn-primary"
+              id="start-game-btn"
+              onclick="startGame()"
+              disabled
+            >
+              <span class="btn-text">START GAME</span>
+              <span class="btn-glow"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Role Reveal Screen -->
+      <div id="reveal-screen" class="screen">
+        <div class="reveal-content">
+          <div class="player-indicator">
+            <span class="player-number"></span>
+            <span class="player-name"></span>
+          </div>
+
+          <p class="instruction">Tap below to see your role</p>
+          <p class="warning">Make sure no one else is looking!</p>
+
+          <button class="btn-reveal" onclick="revealRole()">
+            <span class="eye-icon">👁️</span>
+            <span>REVEAL</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Role Display Screen -->
+      <div id="role-screen" class="screen">
+        <div class="role-content">
+          <div id="role-display">
+            <!-- Role will be displayed here -->
+          </div>
+
+          <button class="btn-hide" onclick="hideRole()">
+            <span>I'VE SEEN IT</span>
+          </button>
+
+          <div class="auto-hide-timer">
+            <span>Auto-hiding in <span id="countdown">10</span>s</span>
+            <div class="timer-bar"><div class="timer-progress"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cover Screen (Between Players) -->
+      <div id="cover-screen" class="screen">
+        <div class="cover-content">
+          <div class="cover-icon"></div>
+          <h2>🎁 GIFT WRAPPED 🎁</h2>
+          <p class="next-player-text">Pass to the next player</p>
+          <p class="next-player-name" id="next-player"></p>
+
+          <button class="btn-primary" onclick="nextPlayer()">
+            <span class="btn-text">READY</span>
+            <span class="btn-glow"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- All Done Screen -->
+      <div id="done-screen" class="screen">
+        <div class="done-content">
+          <div class="done-icon">⭐</div>
+          <h2>🎄 ALL ROLES ASSIGNED 🎄</h2>
+          <p class="done-text">
+            Everyone knows their role. Let the holiday game begin!
+          </p>
+          <p class="hint">
+            Discuss, debate, and find who's on the Naughty List!
+          </p>
+
+          <div class="current-category-display">
+            <span>Category:</span>
+            <span id="current-category-name"></span>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn-secondary" onclick="showVoting()">
+              <span>START VOTING</span>
+            </button>
+            <button class="btn-primary" onclick="resetGame()">
+              <span class="btn-text">NEW GAME</span>
+              <span class="btn-glow"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voting Screen -->
+      <div id="voting-screen" class="screen">
+        <div class="voting-content">
+          <h2>🎅 WHO'S NAUGHTY? 🎅</h2>
+          <p class="voting-instruction">
+            Vote for who you think doesn't know the character!
+          </p>
+
+          <div id="voting-players" class="voting-players">
+            <!-- Player voting buttons will be generated here -->
+          </div>
+
+          <div id="vote-results" class="vote-results hidden">
+            <h3>VOTES</h3>
+            <div id="results-list"></div>
+            <button class="btn-reveal-impostor" onclick="revealImpostor()">
+              REVEAL IMPOSTOR
+            </button>
+          </div>
+
+          <button class="btn-secondary back-btn" onclick="backToDone()">
+            <span>← BACK</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Impostor Reveal Screen -->
+      <div id="impostor-reveal-screen" class="screen">
+        <div class="impostor-reveal-content">
+          <h2>🎅 THE NAUGHTY ONE WAS... 🎅</h2>
+          <div class="impostor-name" id="impostor-name"></div>
+
+          <div class="game-result" id="game-result">
+            <!-- Win/Lose message -->
+          </div>
+
+          <div class="character-reveal">
+            <p>The character was:</p>
+            <div class="final-character" id="final-character"></div>
+            <div class="final-source" id="final-source"></div>
+          </div>
+
+          <button class="btn-primary" onclick="resetGame()">
+            <span class="btn-text">PLAY AGAIN</span>
+            <span class="btn-glow"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Scoreboard Screen -->
+      <div id="scoreboard-screen" class="screen">
+        <div class="scoreboard-content">
+          <h2>🎄 SCOREBOARD 🎄</h2>
+
+          <div class="stats-summary">
+            <div class="stat-card">
+              <span class="stat-value" id="total-games">0</span>
+              <span class="stat-label">Games Played</span>
+            </div>
+            <div class="stat-card impostor-wins">
+              <span class="stat-value" id="impostor-wins">0</span>
+              <span class="stat-label">Impostor Wins</span>
+            </div>
+            <div class="stat-card crew-wins">
+              <span class="stat-value" id="crew-wins">0</span>
+              <span class="stat-label">Crew Wins</span>
+            </div>
+          </div>
+
+          <h3>🏆 PLAYER LEADERBOARD</h3>
+          <div id="player-leaderboard" class="player-leaderboard">
+            <!-- Player stats will be generated here -->
+          </div>
+
+          <h3>📜 GAME HISTORY</h3>
+          <div id="game-history" class="game-history">
+            <!-- Game history will be generated here -->
+          </div>
+
+          <div class="scoreboard-actions">
+            <button class="btn-secondary" onclick="clearHistory()">
+              <span>🗑️ CLEAR ALL</span>
+            </button>
+            <button class="btn-primary" onclick="showScreen('setup-screen')">
+              <span class="btn-text">BACK</span>
+              <span class="btn-glow"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>

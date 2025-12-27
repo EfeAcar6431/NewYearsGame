@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Game - Kahoot Style</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="kahoot.css" />
+  </head>
+  <body>
+    <div class="game-container">
+      <!-- Setup Screen -->
+      <div id="setup-screen" class="screen active">
+        <div class="logo-container">
+          <h1 class="logo">🎯 QUIZZY</h1>
+          <p class="subtitle">The Ultimate Trivia Challenge!</p>
+        </div>
+
+        <div class="setup-card">
+          <div class="input-section">
+            <label>Number of Players</label>
+            <div class="player-stepper">
+              <button class="stepper-btn" onclick="adjustPlayers(-1)">−</button>
+              <span id="player-count">2</span>
+              <button class="stepper-btn" onclick="adjustPlayers(1)">+</button>
+            </div>
+          </div>
+
+          <div id="player-names" class="player-names-grid">
+            <!-- Player inputs generated here -->
+          </div>
+
+          <div class="input-section">
+            <label>Choose Category</label>
+            <div id="category-grid" class="category-grid">
+              <!-- Categories generated here -->
+            </div>
+          </div>
+
+          <div class="input-section">
+            <label>Number of Questions</label>
+            <div class="question-count-selector">
+              <button class="q-count-btn" onclick="setQuestionCount(5)">
+                5
+              </button>
+              <button
+                class="q-count-btn selected"
+                onclick="setQuestionCount(10)"
+              >
+                10
+              </button>
+              <button class="q-count-btn" onclick="setQuestionCount(15)">
+                15
+              </button>
+              <button class="q-count-btn" onclick="setQuestionCount(20)">
+                20
+              </button>
+            </div>
+          </div>
+
+          <button class="start-btn" onclick="startGame()">
+            <span>🚀 START GAME</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Get Ready Screen -->
+      <div id="ready-screen" class="screen">
+        <div class="ready-content">
+          <div class="question-counter">
+            Question <span id="current-q">1</span> of
+            <span id="total-q">10</span>
+          </div>
+          <div class="get-ready-text">GET READY!</div>
+          <div class="ready-countdown" id="ready-countdown">3</div>
+          <div class="current-player-turn">
+            <span id="turn-player"></span>'s turn to answer!
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Screen -->
+      <div id="question-screen" class="screen">
+        <div class="question-header">
+          <div class="timer-container">
+            <div class="timer-circle">
+              <svg viewBox="0 0 100 100">
+                <circle class="timer-bg" cx="50" cy="50" r="45" />
+                <circle
+                  class="timer-progress"
+                  id="timer-circle"
+                  cx="50"
+                  cy="50"
+                  r="45"
+                />
+              </svg>
+              <span class="timer-text" id="timer-text">20</span>
+            </div>
+          </div>
+          <div class="question-info">
+            <span class="q-number"
+              >Question <span id="q-num">1</span>/<span id="q-total"
+                >10</span
+              ></span
+            >
+            <span class="category-badge" id="category-badge">General</span>
+          </div>
+          <div class="points-display">
+            <span id="points-possible">1000</span> pts
+          </div>
+        </div>
+
+        <div class="question-text" id="question-text">
+          What is the capital of France?
+        </div>
+
+        <div class="answers-grid">
+          <button class="answer-btn red" onclick="selectAnswer(0)">
+            <span class="answer-shape">▲</span>
+            <span class="answer-text" id="answer-0">Paris</span>
+          </button>
+          <button class="answer-btn blue" onclick="selectAnswer(1)">
+            <span class="answer-shape">◆</span>
+            <span class="answer-text" id="answer-1">London</span>
+          </button>
+          <button class="answer-btn yellow" onclick="selectAnswer(2)">
+            <span class="answer-shape">●</span>
+            <span class="answer-text" id="answer-2">Berlin</span>
+          </button>
+          <button class="answer-btn green" onclick="selectAnswer(3)">
+            <span class="answer-shape">■</span>
+            <span class="answer-text" id="answer-3">Madrid</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Answer Result Screen -->
+      <div id="result-screen" class="screen">
+        <div class="result-content">
+          <div class="result-icon" id="result-icon">✓</div>
+          <div class="result-text" id="result-text">Correct!</div>
+          <div class="points-earned" id="points-earned">+1000 points</div>
+          <div class="correct-answer-display" id="correct-answer-display">
+            The answer was: <strong id="correct-answer-text"></strong>
+          </div>
+          <div class="player-score-update">
+            <span id="result-player-name">Player</span>:
+            <span id="result-player-score">0</span> pts
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Screen (between questions) -->
+      <div id="leaderboard-screen" class="screen">
+        <div class="leaderboard-content">
+          <h2>🏆 LEADERBOARD</h2>
+          <div id="leaderboard-list" class="leaderboard-list">
+            <!-- Leaderboard items generated here -->
+          </div>
+          <button class="next-btn" onclick="nextQuestion()">
+            <span>Next Question →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Final Results Screen -->
+      <div id="final-screen" class="screen">
+        <div class="final-content">
+          <div class="confetti" id="confetti"></div>
+          <h1>🎉 GAME OVER! 🎉</h1>
+
+          <div class="podium">
+            <div class="podium-place second" id="second-place">
+              <div class="podium-avatar">🥈</div>
+              <div class="podium-name">-</div>
+              <div class="podium-score">0 pts</div>
+              <div class="podium-stand">2</div>
+            </div>
+            <div class="podium-place first" id="first-place">
+              <div class="podium-avatar">🥇</div>
+              <div class="podium-name">-</div>
+              <div class="podium-score">0 pts</div>
+              <div class="podium-stand">1</div>
+            </div>
+            <div class="podium-place third" id="third-place">
+              <div class="podium-avatar">🥉</div>
+              <div class="podium-name">-</div>
+              <div class="podium-score">0 pts</div>
+              <div class="podium-stand">3</div>
+            </div>
+          </div>
+
+          <div id="all-scores" class="all-scores">
+            <!-- All player scores -->
+          </div>
+
+          <div class="final-actions">
+            <button class="play-again-btn" onclick="resetGame()">
+              🔄 Play Again
+            </button>
+            <button class="home-btn" onclick="goHome()">🏠 New Game</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="kahoot.js"></script>
+  </body>
+</html>
